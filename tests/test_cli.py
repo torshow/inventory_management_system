@@ -33,4 +33,30 @@ def test_add_item(mock_request, capsys):
     mock_request.return_value = fake_response(ITEM)
     run(["add", "Milk", "--price", "3.5", "--stock", "10"])
     assert "Added" in capsys.readouterr().out
+
+
+@patch("cli.requests.request")
+def test_update_item(mock_request, capsys):
+    mock_request.return_value = fake_response(ITEM)
+    run(["update", "1", "--price", "3.5"])
+    assert "Updated" in capsys.readouterr().out
+ 
+ 
+def test_update_without_values(capsys):
+    run(["update", "1"])
+    assert "Error" in capsys.readouterr().out
+ 
+ 
+@patch("cli.requests.request")
+def test_delete_item(mock_request, capsys):
+    mock_request.return_value = fake_response({"message": "Item deleted successfully"})
+    run(["delete", "1"])
+    assert "Item deleted" in capsys.readouterr().out
+ 
+ 
+@patch("cli.requests.request")
+def test_api_error_message(mock_request, capsys):
+    mock_request.return_value = fake_response({"error": "Item not found"}, ok=False)
+    run(["view", "999"])
+    assert "Item not found" in capsys.readouterr().out
  
