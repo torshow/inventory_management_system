@@ -36,5 +36,10 @@ def test_search_by_name(mock_get):
     results = external_api.search_by_name("x")
     assert len(results) == 2
     assert results[0]["name"] == "A"
+
+def test_clean_product_uses_barcode_when_code_missing():
+    result = external_api.clean_product({}, "999")
+    assert result == {"barcode": "999", "name": "Unknown", "brand": "", "ingredients": ""}
+ 
  
  
