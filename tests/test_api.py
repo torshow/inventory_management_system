@@ -7,7 +7,7 @@ import app as app_module
 
 @pytest.fixture
 def client():
-    """Test client. Restores the inventory list after each test."""
+
     backup = copy.deepcopy(app_module.inventory)
     app_module.app.config["TESTING"] = True
     yield app_module.app.test_client()
@@ -15,6 +15,23 @@ def client():
  
  
 FAKE_PRODUCT = {"barcode": "123", "name": "Fake Cola", "brand": "FakeCo", "ingredients": "water"}
+
+
+def test_get_all(client):
+    response = client.get("/api/inventory")
+    assert response.status_code == 200
+    assert len(response.get_json()) == 3
+ 
+ 
+def test_get_one(client):
+    response = client.get("/api/inventory/1")
+    assert response.status_code == 200
+    assert response.get_json()["name"] == "Organic Almond Milk"
+ 
+ 
+def test_get_one_not_found(client):
+    assert client.get("/api/inventory/999").status_code == 404
+ 
  
  
  
