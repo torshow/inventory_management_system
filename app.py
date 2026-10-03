@@ -92,6 +92,67 @@ def create_item():
  
     inventory.append(new_item)
     return jsonify(new_item), 201
+
+
+@app.route("/api/inventory/<int:item_id>", methods=["PATCH"])
+def update_item(item_id):
+    item = find_item(item_id)
+    if not item:
+        return jsonify({"error": "Item not found"}), 404
+ 
+    data = request.get_json(silent=True) or {}
+ 
+    
+    try:
+        if "price" in data:
+            item["price"] = float(data["price"])
+        if "stock" in data:
+            item["stock"] = int(data["stock"])
+    except (TypeError, ValueError):
+        return jsonify({"error": "Price must be a number and stock a whole number"}), 400
+ 
+    for field in ["name", "brand", "ingredients"]:
+        if field in data:
+            item[field] = data[field]
+ 
+    return jsonify(item), 200
+ 
+ 
+@app.route("/api/inventory/<int:item_id>", methods=["DELETE"])
+def delete_item(item_id):
+    item = find_item(item_id)
+    if not item:
+        return jsonify({"error": "Item not found"}), 404
+ 
+    inventory.remove(item)
+    return jsonify({"message": "Item deleted successfully"}), 200
+
+@app.route("/api/external/search", methods=["GET"])
+def external_search():
+    
+    barcode = request.args.get("barcode", "").strip()
+    name = request.args.get("name", "").strip()
+ 
+    try:
+        if barcode:
+            product = get_by_barcode(barcode)
+            if product is None:
+                return jsonify({"error": "Product not found on OpenFoodFacts"}), 404
+            return jsonify([product]), 200
+ 
+        if name:
+            return jsonify(search_by_name(name)), 200
+    except requests.RequestException:
+        return jsonify({"error": "External API unavailable"}), 502
+ 
+    return jsonify({"error": "Provide a barcode or a name"}), 400
+ 
+ 
+if __name__ == "__main__":
+    app.run(debug=True)
+ 
+ 
+ 
  
  
  
