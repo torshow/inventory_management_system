@@ -45,6 +45,23 @@ def test_create_item_missing_name(client):
  
 def test_create_item_bad_price(client):
     assert client.post("/api/inventory", json={"name": "X", "price": "abc"}).status_code == 400
+
+def test_update_item(client):
+    response = client.patch("/api/inventory/1", json={"price": 9.99, "stock": 5})
+    data = response.get_json()
+    assert response.status_code == 200
+    assert data["price"] == 9.99
+    assert data["stock"] == 5
+ 
+ 
+def test_update_bad_value(client):
+    assert client.patch("/api/inventory/1", json={"stock": "many"}).status_code == 400
+ 
+ 
+def test_update_not_found(client):
+    assert client.patch("/api/inventory/999", json={"price": 1}).status_code == 404
+ 
+ 
  
  
  
