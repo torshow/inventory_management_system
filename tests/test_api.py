@@ -31,6 +31,21 @@ def test_get_one(client):
  
 def test_get_one_not_found(client):
     assert client.get("/api/inventory/999").status_code == 404
+
+    def test_create_item(client):
+    response = client.post("/api/inventory", json={"name": "Tea", "price": 2.5, "stock": 8})
+    assert response.status_code == 201
+    assert response.get_json()["id"] == 4
+    assert len(client.get("/api/inventory").get_json()) == 4
+ 
+ 
+def test_create_item_missing_name(client):
+    assert client.post("/api/inventory", json={"price": 1}).status_code == 400
+ 
+ 
+def test_create_item_bad_price(client):
+    assert client.post("/api/inventory", json={"name": "X", "price": "abc"}).status_code == 400
+ 
  
  
  
