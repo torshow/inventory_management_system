@@ -59,4 +59,23 @@ def test_api_error_message(mock_request, capsys):
     mock_request.return_value = fake_response({"error": "Item not found"}, ok=False)
     run(["view", "999"])
     assert "Item not found" in capsys.readouterr().out
+
+
+@patch("cli.requests.request", side_effect=cli.requests.exceptions.ConnectionError)
+def test_connection_error(mock_request, capsys):
+    run(["list"])
+    assert "cannot connect" in capsys.readouterr().out
+ 
+ 
+@patch("cli.requests.request")
+def test_find_by_name(mock_request, capsys):
+    mock_request.return_value = fake_response([{"barcode": "1", "name": "Nutella", "brand": "Ferrero"}])
+    run(["find", "--name", "nutella"])
+    assert "Nutella" in capsys.readouterr().out
+ 
+ 
+def test_find_without_values(capsys):
+    run(["find"])
+    assert "Error" in capsys.readouterr().out
+ 
  
