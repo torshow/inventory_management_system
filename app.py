@@ -35,4 +35,18 @@ inventory = [
         "stock": 15,
     },
 ]
+
+
+def find_item(item_id):
+    """
+    Search for an item by ID.
+ 
+    This is a LINEAR SEARCH: we check each item one by one.
+    With n items, the worst case is O(n).
+    """
+    for item in inventory:
+        if item["id"] == item_id:
+            return item
+    return None
+ 
  
