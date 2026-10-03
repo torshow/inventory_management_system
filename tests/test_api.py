@@ -60,6 +60,17 @@ def test_update_bad_value(client):
  
 def test_update_not_found(client):
     assert client.patch("/api/inventory/999", json={"price": 1}).status_code == 404
+
+
+def test_delete_item(client):
+    assert client.delete("/api/inventory/1").status_code == 200
+    assert client.get("/api/inventory/1").status_code == 404
+ 
+ 
+def test_delete_not_found(client):
+    assert client.delete("/api/inventory/999").status_code == 404
+ 
+
  
  
  
