@@ -25,6 +25,24 @@ def get_by_barcode(barcode):
     if data.get("status") != 1:   
         return None
     return clean_product(data["product"], barcode)
+
+
+ 
+def search_by_name(name):
+
+    params = {
+        "search_terms": name,
+        "search_simple": 1,
+        "action": "process",
+        "json": 1,
+        "page_size": 5,
+    }
+    response = requests.get(f"{BASE_URL}/cgi/search.pl", params=params, timeout=10)
+    response.raise_for_status()
+ 
+    results = response.json().get("products", [])
+    return [clean_product(item) for item in results]
+ 
  
  
  
