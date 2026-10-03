@@ -22,7 +22,7 @@ def call_api(method, path, **kwargs):
     return data
 
  
- def show_item(item):
+def show_item(item):
     print(f"[{item['id']}] {item['name']} ({item['brand']}) "
           f"- ${item['price']:.2f} - stock: {item['stock']}")
  
@@ -33,4 +33,22 @@ def list_items(args):
     if items is not None:
         for item in items:
             show_item(item)
+
+
+def view_item(args):
+    item = call_api("GET", f"/inventory/{args.id}")
+    if item:
+        for key, value in item.items():
+            print(f"{key}: {value}")
+ 
+ 
+def add_item(args):
+    body = {"name": args.name, "brand": args.brand,
+            "price": args.price, "stock": args.stock}
+    item = call_api("POST", "/inventory", json=body)
+    if item:
+        print("Added:")
+        show_item(item)
+ 
+
  
