@@ -50,10 +50,12 @@ def next_id():
     return max([item["id"] for item in inventory], default=0) + 1
 
  
-app.route("/api/inventory", methods=["GET"])
+@app.route("/api/inventory", methods=["GET"])
 def get_inventory():
     
     return jsonify(inventory), 200
+
+
  
  
 @app.route("/api/inventory/<int:item_id>", methods=["GET"])
