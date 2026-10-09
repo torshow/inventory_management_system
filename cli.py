@@ -13,7 +13,7 @@ def call_api(method, path, **kwargs):
         print("Error: cannot connect to the API. Is app.py running?")
         return None
     except (requests.exceptions.RequestException, ValueError):
-        print("Error: the API request failed.")
+        print("Error: the API request failed. ({e})")
         return None
  
     if not response.ok:
@@ -128,7 +128,7 @@ def build_parser():
  
  
 if __name__ == "__main__":
-    args = build_parser().parse_args()   # argparse rejects invalid input
+    args = build_parser().parse_args()   
     args.func(args)
  
  
